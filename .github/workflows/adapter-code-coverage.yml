@@ -42,7 +42,7 @@ jobs:
 
       - name: Run coverage tests
         id: run_coverage
-        if: '!contains(steps.get_directories.outputs.result, "")'
+        if: '!contains(steps.get_directories.outputs.result, '')'
         run: |
           directories=$(echo '${{ steps.get_directories.outputs.result }}' | jq -r '.[]')
           go mod download
@@ -75,7 +75,7 @@ jobs:
           repository: onkarvhanumante/prebid-server
 
       - name: Commit coverage files to coverage-preview branch
-        if: '!contains(steps.run_coverage.outputs.coverage_dir, "")'
+        if: '!contains(steps.run_coverage.outputs.coverage_dir, '')'
         id: commit_coverage
         run: |
           directory=.github/preview/${{ github.run_id }}_$(date +%s)
@@ -89,11 +89,11 @@ jobs:
           echo "remote_coverage_preview_dir=${directory}" >> $GITHUB_OUTPUT
 
       - name: Checkout master branch
-        if: '!contains( steps.get_directories.outputs.result, "")'
+        if: '!contains( steps.get_directories.outputs.result, '')'
         run: git checkout master
 
       - name: Add coverage summary to pull request
-        if: '!contains(steps.run_coverage.outputs.coverage_dir,"") && !contains(steps.commit_coverage.outputs.remote_coverage_preview_dir, "")'
+        if: '!contains(steps.run_coverage.outputs.coverage_dir, '') && !contains(steps.commit_coverage.outputs.remote_coverage_preview_dir, '')'
 
         uses: actions/github-script@v6
         with:
