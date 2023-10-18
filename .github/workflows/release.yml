@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "pass"
 
-   publish-tag:
+  publish-tag:
     name: Publish tag
     needs: build-master
     if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
