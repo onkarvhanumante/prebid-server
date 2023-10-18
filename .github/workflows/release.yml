@@ -98,13 +98,17 @@ jobs:
           elif [ $releaseType == "minor" ]; then
             echo "check2"
             # increment minor version and reset patch version
+             echo "check2.1"
             ((minor++))
+             echo "check2.2"
             patch=0
+            echo "check2.3"
           else
             echo "check3"
             # increment patch version
             ((patch++))
           fi
+          echo "check--check"
           nextTag="v${major}.${minor}.${patch}"
           
           if [ ${{ inputs.debug }} == 'true' ]; then
