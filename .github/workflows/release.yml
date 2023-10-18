@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "pass"
 
-  publish-tag:
+   publish-tag:
     name: Publish tag
     needs: build-master
     if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
@@ -72,16 +72,19 @@ jobs:
             echo "Current tag format won't let us compute the new tag name. Required format v[0-9]\+\.[0-9]\+\.[0-9]\+"
             exit 1
           fi
+          echo "pre0"
 
           if [[ "${currentTag:0:1}" != "v" ]]; then
             currentTag="v${currentTag}"
           fi
+          echo "pre1"
 
           nextTag=''
           releaseType=${{ inputs.releaseType }}
+          echo "releaseType: ${releaseType}"
           # Extract current major, minor, and patch versions
           IFS='.' read -r major minor patch <<< "$(echo "${currentTag}" | sed 's/v//')"
-
+          echo "check1"
           if [ $releaseType == "major" ]; then
             # increment major and reset minor, patch versions
             if [ "${major}" -eq 0 ]; then
@@ -93,10 +96,12 @@ jobs:
             minor=0
             patch=0
           elif [ $releaseType == "minor" ]; then
+            echo "check2"
             # increment minor version and reset patch version
             ((minor++))
             patch=0
           else
+            echo "check3"
             # increment patch version
             ((patch++))
           fi
@@ -105,12 +110,14 @@ jobs:
           if [ ${{ inputs.debug }} == 'true' ]; then
             echo "running workflow in debug mode, next ${releaseType} tag: ${nextTag}"
           else
+            echo "check4"
             git tag $nextTag
             git push origin $nextTag
             echo "tag=${nextTag}" >> $GITHUB_OUTPUT
           fi
     outputs:
       releaseTag: ${{ steps.release.outputs.tag }}
+
 
   publish-docker-image:
     name: Publish docker image
