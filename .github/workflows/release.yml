@@ -72,16 +72,13 @@ jobs:
             echo "Current tag format won't let us compute the new tag name. Required format v[0-9]\+\.[0-9]\+\.[0-9]\+"
             exit 1
           fi
-          echo "pre0"
-
+          
           if [[ "${currentTag:0:1}" != "v" ]]; then
             currentTag="v${currentTag}"
           fi
-          echo "pre1"
-
+          
           nextTag=''
           releaseType=${{ inputs.releaseType }}
-          echo "releaseType: ${releaseType}"
           if [ $releaseType == "major" ]; then
               # Increment major and reset minor, patch versions
               # PBS-GO had skipped v1.0.0 major version therefore bump major version from 0 to 2 else increment major version by 1
@@ -99,7 +96,6 @@ jobs:
           if [ ${{ inputs.debug }} == 'true' ]; then
             echo "running workflow in debug mode, next ${releaseType} tag: ${nextTag}"
           else
-            echo "check4"
             git tag $nextTag
             git push origin $nextTag
             echo "tag=${nextTag}" >> $GITHUB_OUTPUT
