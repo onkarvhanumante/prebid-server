@@ -82,34 +82,19 @@ jobs:
           nextTag=''
           releaseType=${{ inputs.releaseType }}
           echo "releaseType: ${releaseType}"
-          # Extract current major, minor, and patch versions
-          IFS='.' read -r major minor patch <<< "$(echo "${currentTag}" | sed 's/v//')"
-          echo "check1"
           if [ $releaseType == "major" ]; then
-            # increment major and reset minor, patch versions
-            if [ "${major}" -eq 0 ]; then
-              # PBS-GO skips major release v1.0.0 - https://github.com/prebid/prebid-server/issues/3068 
-              major=2
-            else
-              ((major++))
-            fi
-            minor=0
-            patch=0
+              # Increment major and reset minor, patch versions
+              # PBS-GO had skipped v1.0.0 major version therefore bump major version from 0 to 2 else increment major version by 1
+              # https://github.com/prebid/prebid-server/issues/3068
+              major=$(echo "${currentTag}" | awk -F. '{gsub(/^v/, "", $1); if($1 == 0) $1=2; else $1+=1; print $1}')
+              nextTag="v${major}.0.0"
           elif [ $releaseType == "minor" ]; then
-            echo "check2"
-            # increment minor version and reset patch version
-             echo "check2.1"
-            ((minor++))
-             echo "check2.2"
-            patch=0
-            echo "check2.3"
+              # Increment minor version and reset patch version
+              nextTag=$(echo "${currentTag}" | awk -F. '{OFS="."; $2+=1; $3=0; print $0}')
           else
-            echo "check3"
-            # increment patch version
-            ((patch++))
+              # Increment patch version
+              nextTag=$(echo "${currentTag}" | awk -F. '{OFS="."; $3+=1; print $0}')
           fi
-          echo "check--check"
-          nextTag="v${major}.${minor}.${patch}"
           
           if [ ${{ inputs.debug }} == 'true' ]; then
             echo "running workflow in debug mode, next ${releaseType} tag: ${nextTag}"
