@@ -36,8 +36,9 @@ jobs:
               return ""
             }
             const helper = utils.diffHelper({github, context})
-            const files = await helper.getDirectories(directoryExtractor)
-            return files.length == 0 ? "" : JSON.stringify(files);
+            const directories = await helper.getDirectories(directoryExtractor)
+            // run coverage for maximum of 2 directories
+            return (directories.length == 0 || directories.length > 2) ? "" : JSON.stringify(directories)
 
       - name: Run coverage tests
         id: run_coverage
@@ -71,7 +72,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: coverage-preview
-          repository: onkarvhanumante/prebid-server
+          repository: prebid/prebid-server
 
       - name: Commit coverage files to coverage-preview branch
         if: steps.run_coverage.outputs.coverage_dir != ''
