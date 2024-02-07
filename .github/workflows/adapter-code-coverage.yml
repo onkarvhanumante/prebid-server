@@ -72,7 +72,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: coverage-preview
-          repository: prebid/prebid-server
+          repository: onkarvhanumante/prebid-server
 
       - name: Commit coverage files to coverage-preview branch
         if: steps.run_coverage.outputs.coverage_dir != ''
