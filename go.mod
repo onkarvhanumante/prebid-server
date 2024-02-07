@@ -1,5 +1,5 @@
 module github.com/prebid/prebid-server
-
+//
 go 1.20
 
 require (
