@@ -50,13 +50,14 @@ jobs:
     steps:
       - name: Debug
         run: |
-          echo "hasWritePermission: ${{ needs.check.outputs.user_permission }}"
+          echo "hasWritePermission: ${{ needs.check-permission.outputs.user_permission }}"
+          echo "hasWritePermission: ${{ needs.check-permission.result }}"
 
   debug-step-with-condition:
     name: Debug step
     runs-on: ubuntu-latest
     needs: check-permission
-    if: contains(needs.check.outputs.user_permission, 'admin')
+    if: contains(needs.check-permission.outputs.user_permission, 'admin')
     steps:
       - name: Debug
         run: |
