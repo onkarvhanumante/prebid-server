@@ -42,8 +42,9 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/onkarvhanumante/prebid-server/collaborators/${{ github.actor }}/permission)          
           user_permission=$(echo $collaboratorPermission | jq '.permission')
+          echo $user_permission
           # check if user_permission is write or admin
-          if [ $user_permission == "write" ] || [ $user_permission == "admin" ]; then
+          if [ $user_permission == "\"write\"" ] || [ $user_permission == "\"admin\"" ]; then
             echo "hasWritePermission=true" >> $GITHUB_OUTPUT
           else
           echo "hasWritePermission=false" >> $GITHUB_OUTPUT
