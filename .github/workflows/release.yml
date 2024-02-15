@@ -31,6 +31,15 @@ jobs:
           fetch-depth: 0
           repository: ${{ github.repository }}
           ref: master
+      - name: check user permission
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          details=$(gh api \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/prebid/prebid-server/collaborators/onkarvhanumante/permission)
+          echo $details | jq '.permission'
       - name: Check user permission
         uses: actions/github-script@v7
         id: check
