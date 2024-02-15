@@ -54,7 +54,7 @@ jobs:
   build-master:
     name: Build master
     needs: check-permission
-    if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
+    if: contains(needs.check-permission.outputs.hasWritePermission, true)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -70,7 +70,7 @@ jobs:
   publish-tag:
     name: Publish tag
     needs: build-master
-    if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
+    if: contains(needs.check-permission.outputs.hasWritePermission, true)
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -165,4 +165,4 @@ jobs:
           version: ${{ needs.publish-tag.outputs.releaseTag }}
           publish: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
