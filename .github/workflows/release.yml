@@ -49,7 +49,7 @@ jobs:
           echo "hasWritePermission=false" >> $GITHUB_OUTPUT
           fi
     outputs:
-      hasWritePermission: ${{ steps.check.outputs.user_permission }}
+      hasWritePermission: ${{ steps.check.outputs.hasWritePermission }}
 
   debug-step:
     name: Debug step
