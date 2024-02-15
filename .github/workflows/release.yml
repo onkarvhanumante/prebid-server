@@ -37,27 +37,24 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          details=$(gh api \
-          -H "Accept: application/vnd.github+json" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          /repos/onkarvhanumante/prebid-server/collaborators/${{ github.actor }}/permission)
-          echo user_permission=$(echo $details | jq '.permission') >> $GITHUB_OUTPUT
+          collaboratorPermission=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/onkarvhanumante/prebid-server/collaborators/${{ github.actor }}/permission)          
+          user_permission=$(echo $collaboratorPermission | jq '.permission')
+          # check if user_permission is write or admin
+          if [ $user_permission == "write" ] || [ $user_permission == "admin" ]; then
+            echo "hasWritePermission=true" >> $GITHUB_OUTPUT
+          else
+          echo "hasWritePermission=false" >> $GITHUB_OUTPUT
+          fi
     outputs:
       hasWritePermission: ${{ steps.check.outputs.user_permission }}
-  
-  debug-step:
-    name: Debug step
-    runs-on: ubuntu-latest
-    needs: check-permission
-    steps:
-      - name: Debug
-        run: |
-          echo "hasWritePermission: ${{ needs.check-permission.outputs.hasWritePermission }}"
 
   build-master:
     name: Build master
     needs: check-permission
-    if: contains(needs.check-permission.outputs.hasWritePermission, 'write') || contains(needs.check-permission.outputs.hasWritePermission, 'admin')
+    if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
