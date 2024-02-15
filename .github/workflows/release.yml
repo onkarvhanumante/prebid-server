@@ -39,7 +39,7 @@ jobs:
           details=$(gh api \
           -H "Accept: application/vnd.github+json" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          /repos/prebid/prebid-server/collaborators/${{ github.actor }}/permission)
+          /repos/onkarvhanumante/prebid-server/collaborators/${{ github.actor }}/permission)
           echo user_permission=$(echo $details | jq '.permission') >> $GITHUB_ENV
     outputs:
       hasWritePermission: ${{ steps.check.outputs.result }}
