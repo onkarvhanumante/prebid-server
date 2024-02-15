@@ -51,6 +51,14 @@ jobs:
     outputs:
       hasWritePermission: ${{ steps.check.outputs.user_permission }}
 
+  debug-step:
+    name: Debug step
+    needs: check-permission
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug
+        run: echo ${{ needs.check-permission.outputs.hasWritePermission }}
+
   build-master:
     name: Build master
     needs: check-permission
