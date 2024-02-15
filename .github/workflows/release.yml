@@ -47,6 +47,7 @@ jobs:
   
   debug-step:
     name: Debug step
+    needs: check-permission
     runs-on: ubuntu-latest
     steps:
       - name: Debug
