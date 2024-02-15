@@ -57,7 +57,7 @@ jobs:
   build-master:
     name: Build master
     needs: check-permission
-    if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
+    if: contains(needs.check-permission.outputs.hasWritePermission, 'write') || contains(needs.check-permission.outputs.hasWritePermission, 'admin')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
