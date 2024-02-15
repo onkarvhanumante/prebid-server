@@ -33,7 +33,7 @@ jobs:
           ref: master
       - name: check user permission
         env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           details=$(gh api \
           -H "Accept: application/vnd.github+json" \
