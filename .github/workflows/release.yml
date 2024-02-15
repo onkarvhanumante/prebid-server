@@ -31,39 +31,24 @@ jobs:
           fetch-depth: 0
           repository: ${{ github.repository }}
           ref: master
-     
-      - name: check user permission
+      - name: Check user permission
+        uses: actions/github-script@v7
         id: check
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          collaboratorPermission=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/onkarvhanumante/prebid-server/collaborators/${{ github.actor }}/permission)          
-          user_permission=$(echo $collaboratorPermission | jq '.permission')
-          echo $user_permission
-          # check if user_permission is write or admin
-          if [ $user_permission == "\"write\"" ] || [ $user_permission == "\"admin\"" ]; then
-            echo "hasWritePermission=true" >> $GITHUB_OUTPUT
-          else
-          echo "hasWritePermission=false" >> $GITHUB_OUTPUT
-          fi
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const utils = require('./.github/workflows/helpers/pull-request-utils.js')
+            const helper = utils.userHelper({github, context, user: ${{ github.actor }}})
+            const hasPermission = await helper.hasWritePermissions()
+            return hasPermission
     outputs:
-      hasWritePermission: ${{ steps.check.outputs.hasWritePermission }}
-
-  debug-step:
-    name: Debug step
-    needs: check-permission
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug
-        run: echo ${{ needs.check-permission.outputs.hasWritePermission }}
+      hasWritePermission: ${{ steps.check.outputs.result }}
 
   build-master:
     name: Build master
     needs: check-permission
-    if: contains(needs.check-permission.outputs.hasWritePermission, true)
+    if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -79,7 +64,7 @@ jobs:
   publish-tag:
     name: Publish tag
     needs: build-master
-    if: contains(needs.check-permission.outputs.hasWritePermission, true)
+    if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
     permissions:
       contents: write
     runs-on: ubuntu-latest
