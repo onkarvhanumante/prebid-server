@@ -50,7 +50,7 @@ jobs:
     steps:
       - name: Debug
         run: |
-          echo "hasWritePermission: ${{ needs.check-permission.outputs.user_permission }}"
+          echo "hasWritePermission: ${{ needs.check-permission.outputs }}"
           echo "hasWritePermission: ${{ needs.check-permission.result }}"
 
   debug-step-with-condition:
