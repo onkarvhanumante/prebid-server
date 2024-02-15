@@ -32,35 +32,29 @@ jobs:
           repository: ${{ github.repository }}
           ref: master
       - name: check user permission
+        id: check
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           details=$(gh api \
           -H "Accept: application/vnd.github+json" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          /repos/onkarvhanumante/prebid-server/collaborators/onkarvhanumante/permission)
-          echo $details | jq '.permission'
-      - name: Check user permission
-        uses: actions/github-script@v7
-        id: check
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            const utils = require('./.github/workflows/helpers/pull-request-utils.js')
-            const helper = utils.userHelper({github, context})
-            const hasPermission = await helper.hasWritePermissions()
-            return hasPermission
+          /repos/prebid/prebid-server/collaborators/${{ github.actor }}/permission)
+          echo user_permission=$(echo $details | jq '.permission') >> $GITHUB_ENV
     outputs:
       hasWritePermission: ${{ steps.check.outputs.result }}
   
   debug-step:
     name: Debug step
-    needs: check-permission
     runs-on: ubuntu-latest
+    needs: check-permission
     steps:
       - name: Debug
-        run: echo ${{ needs.check-permission.outputs.hasWritePermission }}
+        run: |
+          echo "Debugging"
+          echo "$user_permission"
+          echo "${{env.user_permission}}"
+          echo "hasWritePermission: ${{ needs.check-permission.outputs.hasWritePermission }}"
 
   build-master:
     name: Build master
