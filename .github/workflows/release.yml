@@ -64,7 +64,6 @@ jobs:
   publish-tag:
     name: Publish tag
     needs: build-master
-    if: contains(needs.check-permission.outputs.hasWritePermission, 'true')
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -128,16 +127,16 @@ jobs:
           fetch-depth: 0
       - name: Build image
         run: |
-          docker build -t docker.io/prebid/prebid-server:${{ needs.publish-tag.outputs.releaseTag }} .
+          docker build -t docker.io/onkarvhanumante/prebid-server:${{ needs.publish-tag.outputs.releaseTag }} .
       - name: Login to docker Hub
         if: contains(inputs.debug, 'false')
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Publish to docker Hub
         run: |
-          docker push docker.io/prebid/prebid-server:${{ needs.publish-tag.outputs.releaseTag }}
+          docker push docker.io/onkarvhanumante/prebid-server:${{ needs.publish-tag.outputs.releaseTag }}
 
   publish-release:
     name: Publish release
@@ -148,11 +147,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Prebid Server
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Create & publish release
-        uses: release-drafter/release-drafter@v5.22.0
+        uses: release-drafter/release-drafter@v6
         with:
           name: ${{ needs.publish-tag.outputs.releaseTag }}
           tag: ${{ needs.publish-tag.outputs.releaseTag }}
