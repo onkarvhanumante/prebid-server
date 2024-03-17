@@ -16,7 +16,7 @@ import (
 	"github.com/prebid/prebid-server/errortypes"
 	"github.com/prebid/prebid-server/openrtb_ext"
 )
-
+// test
 type TtxAdapter struct {
 	endpoint string
 }
